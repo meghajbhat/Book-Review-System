@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Book Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-container {
+            padding-top: 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .section {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00b894, #00cec9, #0984e3, #6c5ce7);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .section:hover::before {
+            opacity: 1;
+        }
+
+        .emoji-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            letter-spacing: -0.5px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .feature-item:hover {
+            background: #ffffff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transform: translateX(5px);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            min-width: 2rem;
+            text-align: center;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .quote {
+            font-style: italic;
+            font-size: 1.4rem;
+            text-align: center;
+            margin: 3rem 0;
+            padding: 3rem;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .quote::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 8rem;
+            color: #00b894;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+        }
+
+        .nav-link {
+            color: #2d3436;
+            text-decoration: none;
+            margin: 0 0.8rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #00b894, #6c5ce7);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #00b894;
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .header h1 {
+            margin-right: 2rem;
+            white-space: nowrap;
+        }
+
+        .badge {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            margin: 0.3rem;
+            display: inline-block;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #00b89422, #6c5ce722);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon-large {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            color: #636e72;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight-box {
+            padding: 2rem;
+            background: linear-gradient(135deg, #00b89411, #6c5ce711);
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .emoji-title {
+                font-size: 2rem;
+            }
+            
+            .section {
+                padding: 1.5rem;
+            }
+            
+            .quote {
+                font-size: 1.2rem;
+                padding: 2rem;
+            }
+        }
+
+        .btn-outline-danger {
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-danger:hover {
+            background: linear-gradient(45deg, #ff6b6b, #ff8787);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-4">
+                    <h1 class="h4 mb-0">📚 Book Review System</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/customer-dashboard" class="nav-link">Home</a>
+                        <a href="/library" class="nav-link">Library</a>
+                        <a href="/social" class="nav-link">Social</a>
+                        <a href="/about" class="nav-link">About</a>
+                        <a href="/faqs" class="nav-link">FAQs</a>
+                        <a href="/challenges" class="nav-link">Challenges</a>
+                    </nav>
+                </div>
+                <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="section text-center mb-5">
+            <h1 class="emoji-title">📚 About the Book Review System</h1>
+            <p class="lead">Welcome to a world where readers rule, reviews matter, and books never gather digital dust.</p>
+            <p>This isn't just an app. It's a virtual book café, a social library, a gamified reading universe – all coded with love using Java Spring Boot, Thymeleaf, and MySQL.</p>
+        </div>
+
+        <div class="grid-container">
+            <div class="feature-card">
+                <i class="fas fa-search feature-icon-large"></i>
+                <h3>Search & Discover</h3>
+                <p>Find books by name, author, or genre – faster than you flip a page</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-star feature-icon-large"></i>
+                <h3>Rate & Review</h3>
+                <p>Express yourself with ratings, reviews, and animated stars ✨</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-users feature-icon-large"></i>
+                <h3>Social Features</h3>
+                <p>Connect with fellow readers and build your bookish network</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-trophy feature-icon-large"></i>
+                <h3>Gamification</h3>
+                <p>Level up your reading experience with challenges and rewards</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="emoji-title">🌟 What Can You Do Here?</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <i class="fas fa-search feature-icon"></i>
+                            <span>Search any book – by name, author, or genre</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-pen feature-icon"></i>
+                            <span>Write reviews with your own flair</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-star feature-icon"></i>
+                            <span>Rate books using 1–5 stars</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-sort feature-icon"></i>
+                            <span>Sort & filter reviews</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <i class="fas fa-fire feature-icon"></i>
+                            <span>Spotlight carousel for trending books</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-crown feature-icon"></i>
+                            <span>Admin dashboard for complete control</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-chart-line feature-icon"></i>
+                            <span>Track reading progress</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-users feature-icon"></i>
+                            <span>Connect with fellow readers</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="emoji-title">🧑‍🤝‍🧑 Social Features</h2>
+            <p class="lead">Reading is better with friends, right?</p>
+            <div class="row mt-4">
+                <div class="col-md-4 mb-3">
+                    <div class="feature-card">
+                        <i class="fas fa-user-circle feature-icon-large"></i>
+                        <h4>User Profiles</h4>
+                        <p>View reviews, liked genres, and reading stats</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="feature-card">
+                        <i class="fas fa-heart feature-icon-large"></i>
+                        <h4>Connections</h4>
+                        <p>Like profiles and send friend requests</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="feature-card">
+                        <i class="fas fa-chart-bar feature-icon-large"></i>
+                        <h4>Statistics</h4>
+                        <p>Track ratings and reading progress</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="emoji-title">🎮 Reading Meets Gaming</h2>
+            <p class="lead">What if books came with XP?</p>
+            <div class="mt-4">
+                <span class="badge floating">🏆 Daily Challenges</span>
+                <span class="badge floating">📈 Level Up System</span>
+                <span class="badge floating">🎲 Book-based Mini-games</span>
+                <span class="badge floating">🔓 Unlock Achievements</span>
+                <span class="badge floating">📊 Leaderboards</span>
+            </div>
+        </div>
+
+        <div class="quote">
+            <p>"We lose ourselves in books, but we find each other too."</p>
+            <small>– This app (and maybe Hemingway)</small>
+        </div>
+
+        <div class="section text-center">
+            <h2 class="emoji-title">💬 Final Words</h2>
+            <p>Whether you're a speed reader, an overthinker, a dark academia fan, or just here for the memes –<br>this platform is for you.</p>
+            <p class="mt-4">Now go read something. Or review something. Or challenge someone.<br>Just don't stay quiet. Stories are meant to be shared 💬✨</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

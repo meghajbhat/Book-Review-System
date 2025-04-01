@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQs - Book Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            color: #2d3436;
+            text-decoration: none;
+            margin: 0 0.8rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #00b894, #6c5ce7);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #00b894;
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .main-container {
+            padding-top: 100px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .faq-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .faq-header {
+            color: #2d3436;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1.5rem;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #00b894;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: start;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .faq-question i {
+            margin-right: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-question.collapsed i {
+            transform: rotate(-90deg);
+        }
+
+        .faq-answer {
+            padding-left: 2rem;
+            color: #636e72;
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+
+        .faq-answer.collapsed {
+            max-height: 0;
+        }
+
+        .btn-outline-danger {
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-danger:hover {
+            background: linear-gradient(45deg, #ff6b6b, #ff8787);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-4">
+                    <h1 class="h4 mb-0">📚 Book Review System</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/customer-dashboard" class="nav-link">Home</a>
+                        <a href="/library" class="nav-link">Library</a>
+                        <a href="/social" class="nav-link">Social</a>
+                        <a href="/about" class="nav-link">About</a>
+                        <a href="/faqs" class="nav-link">FAQs</a>
+                        <a href="/challenges" class="nav-link">Challenges</a>
+                    </nav>
+                </div>
+                <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container container">
+        <div class="faq-section">
+            <h2 class="faq-header">Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <i class="fas fa-chevron-right"></i>
+                    How do I write a review?
+                </div>
+                <div class="faq-answer">
+                    To write a review, navigate to any book's detail page and scroll down to the review section. 
+                    You can rate the book from 1 to 5 stars and write your thoughts about it. 
+                    Remember, you can only write one review per book.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <i class="fas fa-chevron-right"></i>
+                    Can I edit or delete my review?
+                </div>
+                <div class="faq-answer">
+                    Yes, you can delete your reviews at any time. Look for the delete button (trash icon) next to your review.
+                    Currently, editing reviews is not supported - you'll need to delete your review and write a new one.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <i class="fas fa-chevron-right"></i>
+                    How is the book rating calculated?
+                </div>
+                <div class="faq-answer">
+                    The book rating is the average of all user ratings. Each user can rate a book from 1 to 5 stars.
+                    The overall rating is displayed with one decimal place (e.g., 4.5/5).
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <i class="fas fa-chevron-right"></i>
+                    What are trending books?
+                </div>
+                <div class="faq-answer">
+                    Trending books are determined by a combination of factors including recent ratings, 
+                    number of reviews, and overall rating. These are typically the most popular books 
+                    that users are currently engaging with.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <i class="fas fa-chevron-right"></i>
+                    Can I submit an anonymous review?
+                </div>
+                <div class="faq-answer">
+                    Yes, when writing a review, you can check the "Post Anonymously" option. 
+                    Your review will be displayed without your username, but you can still manage it 
+                    from your dashboard.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <i class="fas fa-chevron-right"></i>
+                    How do I find specific books?
+                </div>
+                <div class="faq-answer">
+                    You can use the search bar at the top of the dashboard to search for books by title, 
+                    author, or genre. You can also browse books by category in the Library section.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleFaq(question) {
+            const answer = question.nextElementSibling;
+            const icon = question.querySelector('i');
+            
+            question.classList.toggle('collapsed');
+            answer.classList.toggle('collapsed');
+        }
+
+        // Initialize all FAQs as collapsed except the first one
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqs = document.querySelectorAll('.faq-item');
+            faqs.forEach((faq, index) => {
+                if (index !== 0) {
+                    faq.querySelector('.faq-question').classList.add('collapsed');
+                    faq.querySelector('.faq-answer').classList.add('collapsed');
+                }
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html> 
