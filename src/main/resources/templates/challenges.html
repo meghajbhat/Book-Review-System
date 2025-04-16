@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Challenges - Book Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            color: #2d3436;
+            text-decoration: none;
+            margin: 0 0.8rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #00b894, #6c5ce7);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #00b894;
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .main-container {
+            padding-top: 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .challenge-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00b894, #00cec9, #0984e3, #6c5ce7);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .challenge-card:hover::before {
+            opacity: 1;
+        }
+
+        .challenge-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        .challenge-description {
+            color: #636e72;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .challenge-progress {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #00b894, #6c5ce7);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .challenge-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00b894;
+        }
+
+        .stat-label {
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+
+        .challenge-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-challenge {
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #00b894;
+            color: #00b894;
+        }
+
+        .btn-outline:hover {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+        }
+
+        .badge {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            color: white;
+        }
+
+        .btn-outline-danger {
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-danger:hover {
+            background: linear-gradient(45deg, #ff6b6b, #ff8787);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .challenge-card {
+                padding: 1.5rem;
+            }
+
+            .challenge-title {
+                font-size: 1.5rem;
+            }
+
+            .challenge-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        .section-header {
+            cursor: pointer;
+            padding: 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .section-title {
+            color: #2d3436;
+            font-size: 1.8rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .section-title i {
+            transition: transform 0.3s ease;
+        }
+
+        .section-header:hover .section-title {
+            color: #00b894;
+        }
+
+        .challenges-section {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-4">
+                    <h1 class="h4 mb-0">📚 Book Review System</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/customer-dashboard" class="nav-link">Home</a>
+                        <a href="/library" class="nav-link">Library</a>
+                        <a href="/social" class="nav-link">Social</a>
+                        <a href="/about" class="nav-link">About</a>
+                        <a href="/faqs" class="nav-link">FAQs</a>
+                        <a href="/challenges" class="nav-link">Challenges</a>
+                    </nav>
+                </div>
+                <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container container">
+        <div class="section-header mb-4" onclick="toggleSection('reading-challenges')">
+            <h2 class="section-title mb-0">
+                <i class="fas fa-chevron-down me-2"></i>
+                📚 Reading Challenges
+            </h2>
+        </div>
+        <div id="reading-challenges" class="challenges-section">
+            <!-- Reading Challenges -->
+            <div class="challenges-section mb-5">
+                <h3 class="section-title">Reading Challenges</h3>
+                <div class="row">
+                    <!-- Review Count Challenge -->
+                    <div class="col-md-6 mb-4">
+                        <div class="challenge-card">
+                            <div class="challenge-icon">✍️</div>
+                            <h4>Review Master Challenge</h4>
+                            <p>Write 20 book reviews this year</p>
+                            <div class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" 
+                                     th:style="'width: ' + ${reviewProgress} + '%'" 
+                                     th:attr="aria-valuenow=${reviewProgress}"
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100" 
+                                     th:text="${reviewCount + '/' + reviewTarget}">1/20</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Friends Challenge -->
+                    <div class="col-md-6 mb-4">
+                        <div class="challenge-card">
+                            <div class="challenge-icon">👥</div>
+                            <h4>Social Reader Challenge</h4>
+                            <p>Make 10 reading friends this year</p>
+                            <div class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" 
+                                     th:style="'width: ' + ${friendProgress} + '%'" 
+                                     th:attr="aria-valuenow=${friendProgress}"
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100" 
+                                     th:text="${friendCount + '/' + friendTarget}">1/10</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Book Games Section -->
+        <div class="section-header mb-4 mt-5">
+            <h2 class="section-title mb-0">
+                <i class="fas fa-chevron-down me-2"></i>
+                🎮 Book Games
+            </h2>
+        </div>
+        <div id="book-games" class="challenges-section" style="display: block;">
+            <!-- Book Trivia Quiz -->
+            <div class="challenge-card">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h2 class="challenge-title">📖 Book Trivia Quiz</h2>
+                    <div style="text-align: right; color: #636e72; font-size: 0.9rem;">
+                        <div style="margin-bottom: 0.3rem;">
+                            <span style="color: #00b894; font-weight: bold;" th:text="${quizAttemptCount}">0</span> attempts
+                        </div>
+                        <div>
+                            Best: <span style="color: #00b894; font-weight: bold;" th:text="${quizBestScore + '/5'}">0/5</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="challenge-description">
+                    Test your knowledge of books, authors, and literary works in our exciting trivia quiz! 
+                    Challenge yourself with questions about classic and contemporary literature.
+                </p>
+                <div class="challenge-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Questions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">30s</div>
+                        <div class="stat-label">Per Question</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">Fun</div>
+                    </div>
+                </div>
+                <div class="challenge-actions">
+                    <a href="/book-trivia-quiz" class="btn-challenge btn-primary" style="text-decoration: none;">
+                        <i class="fas fa-play me-2"></i>
+                        <span th:text="${hasAttemptedQuiz ? 'Try Again' : 'Start Quiz'}">Start Quiz</span>
+                    </a>
+                    <a href="/quiz-leaderboard" class="btn-challenge btn-outline" style="text-decoration: none;">
+                        <i class="fas fa-trophy me-2"></i>View Leaderboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Book Detective -->
+            <div class="challenge-card">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h2 class="challenge-title">🔍 Book Detective</h2>
+                    <div style="text-align: right; color: #636e72; font-size: 0.9rem;">
+                        <div style="margin-bottom: 0.3rem;">
+                            <span style="color: #00b894; font-weight: bold;" th:text="${detectiveAttempts ?: '0'}">0</span> attempts
+                        </div>
+                    </div>
+                </div>
+                <p class="challenge-description">Solve mysteries by finding hidden clues in book covers and descriptions!</p>
+                <div class="challenge-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${detectiveSolvedCases ?: '0'}">0</div>
+                        <div class="stat-label">Cases Solved</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${detectiveAccuracy != null ? detectiveAccuracy + '%' : '0%'}">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${detectivePoints ?: '0'}">0</div>
+                        <div class="stat-label">Points</div>
+                    </div>
+                </div>
+                <div class="challenge-actions">
+                    <a href="/detective/new-case" class="btn-challenge btn-primary" style="text-decoration: none;">
+                        <i class="fas fa-search me-2"></i>New Case
+                    </a>
+                    <a href="/detective/case-history" class="btn-challenge btn-outline" style="text-decoration: none;">
+                        <i class="fas fa-history me-2"></i>Case History
+                    </a>
+                    <a href="/detective/leaderboard" class="btn-challenge btn-outline" style="text-decoration: none;">
+                        <i class="fas fa-trophy me-2"></i>Leaderboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Book Bingo -->
+            <div class="challenge-card">
+                <h2 class="challenge-title">📚 Book Bingo</h2>
+                <p class="challenge-description">Complete your bingo card by reading books that match different categories!</p>
+                <div class="challenge-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${bingoCardsWon ?: '0'}">0</div>
+                        <div class="stat-label">Cards Won</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${currentBingoProgress != null ? currentBingoProgress + '%' : '0%'}">0%</div>
+                        <div class="stat-label">Current Card</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${bingoChallengesCompleted ?: '0'}">0</div>
+                        <div class="stat-label">Challenges Done</div>
+                    </div>
+                </div>
+                <div class="challenge-actions">
+                    <a href="/bingo/card" class="btn-challenge btn-primary" style="text-decoration: none;">
+                        <i class="fas fa-play me-2"></i>View Card
+                    </a>
+                    <form th:action="@{/bingo/new-card}" method="post" style="display: inline;">
+                        <button type="submit" class="btn-challenge btn-outline" style="text-decoration: none;">
+                            <i class="fas fa-plus me-2"></i>New Card
+                        </button>
+                    </form>
+                    <a href="/bingo/history" class="btn-challenge btn-outline" style="text-decoration: none;">
+                        <i class="fas fa-history me-2"></i>View History
+                    </a>
+                </div>
+            </div>
+
+            <!-- Character Match -->
+            <div class="challenge-card">
+                <h2 class="challenge-title">🎭 Character Match</h2>
+                <p class="challenge-description">Match book characters with their descriptions and quotes!</p>
+                <div class="challenge-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${characterMatchesCount ?: '0'}">0</div>
+                        <div class="stat-label">Matches Made</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${characterBestScore ?: '0'}">0</div>
+                        <div class="stat-label">Best Score</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${characterLevel ?: '1'}">1</div>
+                        <div class="stat-label">Level</div>
+                    </div>
+                </div>
+                <div class="challenge-actions">
+                    <a href="/character-match/game" class="btn-challenge btn-primary" style="text-decoration: none;">
+                        <i class="fas fa-gamepad me-2"></i>Play Now
+                    </a>
+                    <a href="/character-match/leaderboard" class="btn-challenge btn-outline" style="text-decoration: none;">
+                        <i class="fas fa-trophy me-2"></i>Leaderboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize sections to be visible by default
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make sure both sections are visible
+            document.getElementById('reading-challenges').style.display = 'block';
+            document.getElementById('book-games').style.display = 'block';
+            
+            // Update icons to show sections are expanded
+            document.querySelector('#reading-challenges').previousElementSibling.querySelector('i').classList.remove('fa-chevron-up');
+            document.querySelector('#reading-challenges').previousElementSibling.querySelector('i').classList.add('fa-chevron-down');
+            document.querySelector('#book-games').previousElementSibling.querySelector('i').classList.remove('fa-chevron-up');
+            document.querySelector('#book-games').previousElementSibling.querySelector('i').classList.add('fa-chevron-down');
+        });
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const header = section.previousElementSibling;
+            const icon = header.querySelector('i');
+            
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                section.style.display = 'none';
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Social - Book Review</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            padding: 1rem 2rem;
+            background-color: white !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #333 !important;
+            font-weight: 600;
+        }
+        .navbar-brand img {
+            margin-right: 10px;
+        }
+        .nav-link {
+            color: #666 !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #007bff !important;
+        }
+        .logout-btn {
+            border: 2px solid #dc3545;
+            color: #dc3545 !important;
+            border-radius: 20px;
+            padding: 0.375rem 1.5rem !important;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background-color: #dc3545;
+            color: white !important;
+        }
+        .container {
+            max-width: 1200px;
+            padding: 2rem;
+        }
+        .page-title {
+            margin-bottom: 2rem;
+            color: #333;
+            font-weight: 600;
+            font-size: 2rem;
+        }
+        .user-block {
+            background-color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .user-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .user-info {
+            margin-bottom: 1rem;
+        }
+        .user-info h5 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .user-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .badge {
+            background-color: #dc3545;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="/customer/customer-dashboard">
+                📚 Book Review System
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <nav class="d-flex align-items-center">
+                        <a href="/customer-dashboard" class="nav-link">Home</a>
+                        <a href="/library" class="nav-link">Library</a>
+                        <a href="/social" class="nav-link">Social</a>
+                        <a href="/about" class="nav-link">About</a>
+                        <a href="/faqs" class="nav-link">FAQs</a>
+                        <a href="/challenges" class="nav-link">Challenges</a>
+                    </nav>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/customer/friend-requests}">
+                            Friend Requests
+                            <span class="badge" th:if="${pendingRequests != null && !pendingRequests.isEmpty()}" 
+                                  th:text="${pendingRequests.size()}">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/customer/friends}">Friends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link logout-btn" th:href="@{/logout}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Discover Readers</h2>
+        <div class="row">
+            <div class="col-md-4" th:each="user : ${users}">
+                <div class="user-block">
+                    <div class="user-info">
+                        <h5 th:text="${user.name}">User Name</h5>
+                        <p th:text="'@' + ${user.username}">@username</p>
+                    </div>
+                    <div class="user-actions">
+                        <a th:href="@{/user/{id}(id=${user.userId})}" class="btn btn-primary">View Profile</a>
+                        <form th:action="@{/customer/send-friend-request/{id}(id=${user.userId})}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-success">Add Friend</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html> 

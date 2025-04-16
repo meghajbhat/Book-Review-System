@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Book Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            color: #2d3436;
+            text-decoration: none;
+            margin: 0 0.8rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #00b894, #6c5ce7);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #00b894;
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .main-container {
+            padding-top: 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .welcome-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .admin-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 0.5rem 0;
+        }
+
+        .action-btn {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+            color: white;
+        }
+
+        .logout-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8787);
+        }
+
+        .section-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+        }
+
+        .section-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #2d3436;
+        }
+
+        .section-icon {
+            font-size: 1.2rem;
+            color: #00b894;
+            transition: transform 0.3s ease;
+        }
+
+        .section-header:hover .section-icon {
+            transform: translateY(-2px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2d3436;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #00b894;
+            box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.1);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-box {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .book-card {
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .book-info {
+            padding: 1rem;
+        }
+
+        .book-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3436;
+        }
+
+        .book-author {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .edit-btn {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding-top: 80px;
+            }
+
+            .section-card {
+                padding: 1.5rem;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .book-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .book-cover {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-4">
+                    <h1 class="h4 mb-0">📚 Book Review System</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
+                        <a href="/admin/manage-users" class="nav-link">Manage Users</a>
+                        <a href="/admin/manage-books" class="nav-link">Manage Books</a>
+                    </nav>
+                </div>
+                <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container container">
+        <div class="welcome-card">
+            <h2>Welcome, <span th:text="${adminName}">Admin</span>! 👋</h2>
+            <div class="admin-badge">
+                <i class="fas fa-shield-alt me-2"></i>Administrator
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header" onclick="toggleSection('addBookSection')">
+                <h3><i class="fas fa-plus-circle me-2"></i>Add New Book</h3>
+                <i class="fas fa-chevron-down section-icon" id="addBookIcon"></i>
+            </div>
+            <div id="addBookSection" style="display: none;">
+                <form action="/admin/add-book" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label">Book Title</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Author Name</label>
+                        <input type="text" name="author" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Price</label>
+                        <input type="number" step="0.01" name="price" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Genre</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="genre" value="Fantasy" id="fantasy">
+                                <label for="fantasy">Fantasy</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="genre" value="Adventure" id="adventure">
+                                <label for="adventure">Adventure</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="genre" value="Romance" id="romance">
+                                <label for="romance">Romance</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="genre" value="Horror" id="horror">
+                                <label for="horror">Horror</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="genre" value="Mystery" id="mystery">
+                                <label for="mystery">Mystery</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="genre" value="Sci-Fi" id="scifi">
+                                <label for="scifi">Sci-Fi</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="genre" value="Thriller" id="thriller">
+                                <label for="thriller">Thriller</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="genre" value="Historical" id="historical">
+                                <label for="historical">Historical</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Summary</label>
+                        <textarea name="summary" class="form-control" rows="4" placeholder="Enter book summary..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Book Cover Image</label>
+                        <input type="file" name="imageFile" class="form-control" accept="image/*" required>
+                    </div>
+
+                    <button type="submit" class="action-btn">Add Book</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="search-box">
+            <h3 class="mb-4"><i class="fas fa-search me-2"></i>Search Books</h3>
+            <form method="get" action="/admin/dashboard" class="search-form">
+                <input type="text" name="searchValue" class="form-control" placeholder="Search..." th:value="${searchValue}">
+                <select name="searchField" class="form-control" required>
+                    <option value="title" th:selected="${searchField == 'title'}">Book Title</option>
+                    <option value="author" th:selected="${searchField == 'author'}">Author</option>
+                    <option value="genre" th:selected="${searchField == 'genre'}">Genre</option>
+                </select>
+                <button type="submit" class="action-btn">Search</button>
+                <a href="/admin/dashboard" class="action-btn">Clear</a>
+            </form>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header" onclick="toggleSection('bookListSection')">
+                <h3><i class="fas fa-book me-2"></i>Available Books</h3>
+                <i class="fas fa-chevron-down section-icon" id="bookListIcon"></i>
+            </div>
+            <div id="bookListSection">
+                <div class="book-grid">
+                    <div class="book-card" th:each="book : ${books}">
+                        <img th:src="${book.imagePath}" class="book-cover" th:alt="${book.title}">
+                        <div class="book-info">
+                            <h4 class="book-title" th:text="${book.title}">Book Title</h4>
+                            <p class="book-author" th:text="${book.author}">Author Name</p>
+                            <a th:href="@{/admin/edit-book/{id}(id=${book.id})}">
+                                <button class="edit-btn">
+                                    <i class="fas fa-edit me-2"></i>Edit
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            const icon = document.getElementById(id === 'addBookSection' ? 'addBookIcon' : 'bookListIcon');
+            const isVisible = section.style.display !== 'none';
+            
+            section.style.display = isVisible ? 'none' : 'block';
+            icon.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+            localStorage.setItem(id, section.style.display);
+        }
+
+        window.onload = function() {
+            ['addBookSection', 'bookListSection'].forEach(id => {
+                const section = document.getElementById(id);
+                const icon = document.getElementById(id === 'addBookSection' ? 'addBookIcon' : 'bookListIcon');
+                const savedState = localStorage.getItem(id);
+                if (savedState) {
+                    section.style.display = savedState;
+                    icon.style.transform = savedState === 'none' ? 'rotate(0deg)' : 'rotate(180deg)';
+                }
+            });
+        };
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

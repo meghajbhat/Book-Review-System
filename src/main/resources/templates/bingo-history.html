@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo Card History - Book Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            color: #2d3436;
+            text-decoration: none;
+            margin: 0 0.8rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover {
+            color: #00b894;
+        }
+
+        .main-container {
+            padding-top: 100px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .history-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .history-title {
+            font-size: 2rem;
+            color: #2d3436;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .history-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .history-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: #00b894;
+        }
+
+        .card-header {
+            padding: 1rem;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .card-header:hover {
+            background-color: #f1f3f5;
+        }
+
+        .card-toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .card-header.active .card-toggle-icon {
+            transform: rotate(90deg);
+        }
+
+        .quick-stats {
+            font-size: 0.9rem;
+            color: #636e72;
+        }
+
+        .quick-stats .text-muted {
+            margin: 0 0.5rem;
+        }
+
+        .card-details {
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+            margin-top: 1rem;
+        }
+
+        .card-date {
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+
+        .card-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background: #00b894;
+            color: white;
+        }
+
+        .status-in-progress {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        .card-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00b894;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #636e72;
+        }
+
+        .card-challenges {
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .challenge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0;
+        }
+
+        .challenge-item.completed {
+            color: #00b894;
+        }
+
+        .challenge-item.completed i {
+            color: #00b894;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-action {
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            border: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #00b894;
+            color: #00b894;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+        }
+
+        .btn-outline:hover {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #636e72;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #00b894;
+        }
+
+        @media (max-width: 768px) {
+            .history-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            .card-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+            margin-left: 1rem;
+        }
+
+        .btn-delete:hover {
+            opacity: 1;
+            background-color: rgba(255, 107, 107, 0.1);
+            transform: scale(1.1);
+        }
+
+        .history-card.deleting {
+            animation: fadeOut 0.5s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-4">
+                    <h1 class="h4 mb-0">📚 Book Review System</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/customer-dashboard" class="nav-link">Home</a>
+                        <a href="/library" class="nav-link">Library</a>
+                        <a href="/social" class="nav-link">Social</a>
+                        <a href="/about" class="nav-link">About</a>
+                        <a href="/faqs" class="nav-link">FAQs</a>
+                        <a href="/challenges" class="nav-link">Challenges</a>
+                    </nav>
+                </div>
+                <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container container">
+        <div class="history-container">
+            <h2 class="history-title">📚 Bingo Card History</h2>
+
+            <div class="card-list" th:if="${not #lists.isEmpty(cards)}">
+                <div th:each="card, cardStat : ${cards}" class="history-card">
+                    <div class="card-header" onclick="toggleCard(this)" style="cursor: pointer;">
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="fas fa-chevron-right card-toggle-icon"></i>
+                                <div class="card-date" th:text="${#temporals.format(card.createdAt, 'MMM dd, yyyy HH:mm')}">
+                                    Jan 1, 2024 12:00
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="quick-stats">
+                                    <span th:text="${#lists.size(card.completedChallenges)} + '/' + ${#lists.size(card.challenges)}">0/0</span>
+                                    <span class="text-muted">•</span>
+                                    <span th:text="${#numbers.formatDecimal(card.progress, 0, 0)} + '%'">0%</span>
+                                </div>
+                                <div th:class="'card-status ' + ${card.completed ? 'status-completed' : 'status-in-progress'}"
+                                     th:text="${card.completed ? 'Completed' : 'In Progress'}">
+                                    Status
+                                </div>
+                                <button class="btn-delete" th:onclick="'deleteCard(this, ' + ${card.id} + ')'"
+                                        onclick="event.stopPropagation()">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-details" style="display: none;">
+                        <div class="card-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" th:text="${#lists.size(card.completedChallenges)}">0</div>
+                                <div class="stat-label">Completed</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" th:text="${#lists.size(card.challenges)}">0</div>
+                                <div class="stat-label">Total Challenges</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" th:text="${#numbers.formatDecimal(card.progress, 0, 0)} + '%'">0%</div>
+                                <div class="stat-label">Progress</div>
+                            </div>
+                        </div>
+
+                        <div class="card-challenges">
+                            <div th:each="challenge : ${card.challenges}" 
+                                 th:class="'challenge-item' + ${card.completedChallenges.contains(challenge) ? ' completed' : ''}">
+                                <i class="fas" th:classappend="${card.completedChallenges.contains(challenge) ? 'fa-check-circle' : 'fa-circle'}"></i>
+                                <span th:text="${challenge}">Challenge text</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="empty-state" th:if="${#lists.isEmpty(cards)}">
+                <i class="fas fa-book-open"></i>
+                <h3>No Bingo Cards Yet</h3>
+                <p>Start your reading journey by creating your first bingo card!</p>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/bingo/card" class="btn-action btn-primary">
+                    <i class="fas fa-play me-2"></i>Current Card
+                </a>
+                <form th:action="@{/bingo/new-card}" method="post" style="display: inline;">
+                    <button type="submit" class="btn-action btn-outline">
+                        <i class="fas fa-plus me-2"></i>New Card
+                    </button>
+                </form>
+                <a href="/challenges" class="btn-action btn-outline">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Challenges
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCard(header) {
+            const card = header.closest('.history-card');
+            const details = card.querySelector('.card-details');
+            const isExpanded = details.style.display !== 'none';
+            
+            // Toggle this card
+            header.classList.toggle('active');
+            details.style.display = isExpanded ? 'none' : 'block';
+            
+            // Animate the chevron
+            const chevron = header.querySelector('.card-toggle-icon');
+            chevron.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(90deg)';
+        }
+
+        function deleteCard(button, cardId) {
+            event.stopPropagation(); // Prevent card toggle
+            
+            if (confirm('Are you sure you want to delete this card? This action cannot be undone.')) {
+                const card = button.closest('.history-card');
+                
+                fetch(`/bingo/delete-card/${cardId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Add animation class
+                        card.classList.add('deleting');
+                        
+                        // Remove the card after animation
+                        setTimeout(() => {
+                            card.remove();
+                            
+                            // Check if there are no more cards
+                            const remainingCards = document.querySelectorAll('.history-card');
+                            if (remainingCards.length === 0) {
+                                // Show empty state
+                                const cardList = document.querySelector('.card-list');
+                                const emptyState = document.createElement('div');
+                                emptyState.className = 'empty-state';
+                                emptyState.innerHTML = `
+                                    <i class="fas fa-book-open"></i>
+                                    <h3>No Bingo Cards Yet</h3>
+                                    <p>Start your reading journey by creating your first bingo card!</p>
+                                `;
+                                cardList.parentNode.replaceChild(emptyState, cardList);
+                            }
+                        }, 500);
+                        
+                        showToast(data.message, 'success');
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showToast('An error occurred while deleting the card. Please try again.', 'error');
+                });
+            }
+        }
+    </script>
+</body>
+
+</html> 

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Book Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            color: #2d3436;
+            text-decoration: none;
+            margin: 0 0.8rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #00b894, #6c5ce7);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #00b894;
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .header h1 {
+            margin-right: 2rem;
+            white-space: nowrap;
+        }
+
+        .btn-outline-danger {
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-danger:hover {
+            background: linear-gradient(45deg, #ff6b6b, #ff8787);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.2);
+        }
+
+        .main-container {
+            padding-top: 70px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 30px;
+        }
+
+        .section-group {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-group:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-label {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            border-radius: 15px;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            font-size: 0.85rem;
+        }
+
+        .books-container {
+            display: flex;
+            gap: 0.8rem;
+            overflow-x: auto;
+            padding: 0.3rem 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .books-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .book-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 0.8rem;
+            min-width: 140px;
+            max-width: 140px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 0.6rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: #2d3436;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.3;
+        }
+
+        .book-author {
+            font-size: 0.8rem;
+            color: #636e72;
+            margin-bottom: 0.6rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .rating-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.6rem;
+            background: rgba(0, 184, 148, 0.1);
+            border-radius: 12px;
+            color: #00b894;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rating-label span {
+            display: inline;
+        }
+
+        .search-section {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .search-box {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #00b894;
+            box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.1);
+        }
+
+        .btn-search {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+        }
+
+        .trending-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .trending-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .trending-item {
+            min-width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .book-card {
+                min-width: 120px;
+                max-width: 120px;
+                padding: 0.6rem;
+            }
+
+            .book-cover {
+                height: 160px;
+            }
+
+            .section-group {
+                padding: 0.8rem;
+            }
+
+            .section-label {
+                padding: 0.25rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .search-box {
+                padding: 1rem;
+                margin: 0 1rem;
+            }
+        }
+
+        /* New styles for reviews section */
+        .reviews-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .reviews-header:hover {
+            opacity: 0.9;
+        }
+
+        .reviews-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .reviews-content.collapsed {
+            max-height: 0;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.collapsed {
+            transform: rotate(-180deg);
+        }
+
+        .review-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .review-book {
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .review-book a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .review-book a:hover {
+            color: #00b894;
+        }
+
+        .review-rating {
+            color: #ffd43b;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-comment {
+            color: #636e72;
+            line-height: 1.6;
+        }
+
+        .review-date {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+            margin-top: 0.5rem;
+        }
+
+        .delete-review-btn {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-review-btn:hover {
+            background: #fff5f5;
+            color: #ff5252;
+        }
+
+        .no-reviews {
+            text-align: center;
+            padding: 2rem;
+            color: #a0a0a0;
+        }
+
+        .no-reviews i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #cbd3da;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-4">
+                    <h1 class="h4 mb-0">📚 Book Review System</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/customer-dashboard" class="nav-link">Home</a>
+                        <a href="/library" class="nav-link">Library</a>
+                        <a href="/social" class="nav-link">Social</a>
+                        <a href="/about" class="nav-link">About</a>
+                        <a href="/faqs" class="nav-link">FAQs</a>
+                        <a href="/challenges" class="nav-link">Challenges</a>
+                    </nav>
+                </div>
+                <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container container">
+        <!-- Welcome Message -->
+        <div class="section-group">
+            <h2 class="h4 mb-3">Welcome, <span th:text="${customerName}">User</span>! 👋</h2>
+            <p class="text-muted">Discover your next favorite book from our curated collection.</p>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-box">
+                <form th:action="@{/books/search}" method="get">
+                    <input type="text" name="query" class="search-input" placeholder="Search for books..." th:value="${searchQuery}">
+                    <button type="submit" class="btn-search">
+                        <i class="fas fa-search me-2"></i>Search
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- All Books -->
+        <div class="section-group">
+            <div class="section-label">All Books</div>
+            <div class="books-container">
+                <div class="book-card" th:each="book : ${allBooks}" th:onclick="'window.location.href=\'/books/' + ${book.id} + '\''">
+                    <img th:if="${book.imagePath}" th:src="${book.imagePath}" class="book-cover" th:alt="${book.title}">
+                    <img th:unless="${book.imagePath}" src="/images/default-book-cover.jpg" class="book-cover" alt="Default Cover">
+                    <h3 class="book-title" th:text="${book.title}">Book Title</h3>
+                    <p class="book-author" th:text="${book.author}">Author Name</p>
+                    <span class="rating-label" th:if="${book.rating != null}">
+                        ⭐ <span th:text="${#numbers.formatDecimal(book.rating, 1, 1)}">4.5</span>
+                        (<span th:text="${reviewCounts[book.id]} + ' users'">0 users</span>)
+                    </span>
+                    <span class="rating-label" th:unless="${book.rating != null}">No ratings yet</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trending Books -->
+        <div class="section-group" th:if="${trendingBooks != null and !trendingBooks.isEmpty()}">
+            <div class="section-label">Trending Now</div>
+            <div class="trending-container">
+                <div class="trending-wrapper" id="trendingWrapper">
+                    <div class="trending-item" th:each="book : ${trendingBooks}">
+                        <div class="book-card" th:onclick="'window.location.href=\'/books/' + ${book.id} + '\''">
+                            <img th:if="${book.imagePath}" th:src="${book.imagePath}" class="book-cover" th:alt="${book.title}">
+                            <img th:unless="${book.imagePath}" src="/images/default-book-cover.jpg" class="book-cover" alt="Default Cover">
+                            <h3 class="book-title" th:text="${book.title}">Book Title</h3>
+                            <p class="book-author" th:text="${book.author}">Author Name</p>
+                            <span class="rating-label" th:if="${book.rating != null}">
+                                ⭐ <span th:text="${#numbers.formatDecimal(book.rating, 1, 1)}">4.5</span>
+                                (<span th:text="${reviewCounts[book.id]} + ' users'">0 users</span>)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recently Added Books -->
+        <div class="section-group" th:if="${recentBooks != null and !recentBooks.isEmpty()}">
+            <div class="section-label">Recently Added</div>
+            <div class="books-container">
+                <div class="book-card" th:each="book : ${recentBooks}" th:onclick="'window.location.href=\'/books/' + ${book.id} + '\''">
+                    <img th:if="${book.imagePath}" th:src="${book.imagePath}" class="book-cover" th:alt="${book.title}">
+                    <img th:unless="${book.imagePath}" src="/images/default-book-cover.jpg" class="book-cover" alt="Default Cover">
+                    <h3 class="book-title" th:text="${book.title}">Book Title</h3>
+                    <p class="book-author" th:text="${book.author}">Author Name</p>
+                    <span class="rating-label" th:if="${book.rating != null}">
+                        ⭐ <span th:text="${#numbers.formatDecimal(book.rating, 1, 1)}">4.5</span>
+                        (<span th:text="${reviewCounts[book.id]} + ' users'">0 users</span>)
+                    </span>
+                    <span class="rating-label" th:unless="${book.rating != null}">No ratings yet</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- User's Reviews Section -->
+        <div class="reviews-section">
+            <div class="reviews-header" onclick="toggleReviews()">
+                <h3><i class="fas fa-star me-2"></i>Your Reviews</h3>
+                <i class="fas fa-chevron-up toggle-icon"></i>
+            </div>
+
+            <div class="reviews-content">
+                <div th:if="${userReviews != null and !userReviews.isEmpty()}">
+                    <div class="review-card" th:each="review : ${userReviews}">
+                        <div class="review-book">
+                            <i class="fas fa-book me-2"></i>
+                            <a th:href="@{/books/{id}(id=${review.book.id})}" th:text="${review.book.title}">Book Title</a>
+                        </div>
+                        <div class="review-rating">
+                            <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, review.rating)}"></i>
+                            <i class="far fa-star" th:each="i : ${#numbers.sequence(review.rating + 1, 5)}"></i>
+                            <span class="ms-2" th:text="${review.rating + '/5'}">5/5</span>
+                        </div>
+                        <div class="review-comment" th:text="${review.comment}">Review comment</div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="review-date" th:text="${#temporals.format(review.createdAt, 'MMM dd, yyyy')}">Date</div>
+                            <form th:action="@{/reviews/delete}" method="post" style="display: inline;">
+                                <input type="hidden" name="reviewId" th:value="${review.id}">
+                                <input type="hidden" name="bookId" th:value="${review.book.id}">
+                                <button type="submit" class="delete-review-btn" onclick="return confirm('Are you sure you want to delete this review?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="no-reviews" th:unless="${userReviews != null and !userReviews.isEmpty()}">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>You haven't written any reviews yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-scroll trending books
+        const trendingWrapper = document.getElementById('trendingWrapper');
+        let currentIndex = 0;
+
+        function scrollTrending() {
+            const items = trendingWrapper.children;
+            currentIndex = (currentIndex + 1) % items.length;
+            trendingWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+
+        setInterval(scrollTrending, 3000);
+
+        // Toggle reviews section
+        function toggleReviews() {
+            const content = document.querySelector('.reviews-content');
+            const icon = document.querySelector('.toggle-icon');
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
+
+            // Store the state in localStorage
+            localStorage.setItem('reviewsCollapsed', content.classList.contains('collapsed'));
+        }
+
+        // Check localStorage on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const content = document.querySelector('.reviews-content');
+            const icon = document.querySelector('.toggle-icon');
+            const isCollapsed = localStorage.getItem('reviewsCollapsed') === 'true';
+            
+            if (isCollapsed) {
+                content.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

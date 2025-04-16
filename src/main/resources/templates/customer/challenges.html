@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reading Challenges - Book Review</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            padding: 1rem 2rem;
+            background-color: white !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #333 !important;
+            font-weight: 600;
+        }
+        .nav-link {
+            color: #666 !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #007bff !important;
+        }
+        .logout-btn {
+            border: 2px solid #dc3545;
+            color: #dc3545 !important;
+            border-radius: 20px;
+            padding: 0.375rem 1.5rem !important;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background-color: #dc3545;
+            color: white !important;
+        }
+        .container {
+            max-width: 1200px;
+            padding: 2rem;
+        }
+        .content-section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        .challenge-card {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .challenge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .challenge-title {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        .challenge-description {
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        .challenge-stats {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .btn-join {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.3s;
+        }
+        .btn-join:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/customer/customer-dashboard}">
+                📚 Book Review System
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/customer/home}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/customer/library}">Library</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/customer/social}">Social</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/customer/about}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/customer/faqs}">FAQs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/customer/challenges}">Challenges</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link logout-btn" th:href="@{/logout}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="content-section">
+            <h1 class="section-title">Reading Challenges</h1>
+            <p class="mb-4">Join our reading challenges to discover new books and track your reading progress!</p>
+
+            <div class="challenge-card">
+                <h3 class="challenge-title">📚 2025 Reading Challenge</h3>
+                <p class="challenge-description">Read 50 books in 2025! Track your progress and earn badges along the way.</p>
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="challenge-stats">
+                    <span>12/50 books completed</span>
+                    <span>238 days remaining</span>
+                </div>
+                <button class="btn btn-join mt-3">Join Challenge</button>
+            </div>
+
+            <div class="challenge-card">
+                <h3 class="challenge-title">🌍 Around the World Challenge</h3>
+                <p class="challenge-description">Read books from 10 different countries and explore diverse perspectives.</p>
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="challenge-stats">
+                    <span>4/10 countries completed</span>
+                    <span>Ongoing challenge</span>
+                </div>
+                <button class="btn btn-join mt-3">Join Challenge</button>
+            </div>
+
+            <div class="challenge-card">
+                <h3 class="challenge-title">📖 Genre Explorer</h3>
+                <p class="challenge-description">Read one book from each major genre to broaden your reading horizons.</p>
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="challenge-stats">
+                    <span>6/10 genres completed</span>
+                    <span>Ongoing challenge</span>
+                </div>
+                <button class="btn btn-join mt-3">Join Challenge</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html> 

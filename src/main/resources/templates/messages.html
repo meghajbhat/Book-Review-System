@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Book Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            color: #2d3436;
+            text-decoration: none;
+            margin: 0 0.8rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #00b894, #6c5ce7);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #00b894;
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .main-container {
+            padding-top: 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            letter-spacing: -0.5px;
+        }
+
+        .conversation-list {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .conversation-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .conversation-item:hover {
+            background: #f8f9fa;
+        }
+
+        .conversation-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .message-preview {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        .unread-badge {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .timestamp {
+            color: #636e72;
+            font-size: 0.8rem;
+        }
+
+        .chat-container {
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            max-width: 80%;
+        }
+
+        .message-sent {
+            margin-left: auto;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            padding: 1rem;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .message-received {
+            margin-right: auto;
+            background: white;
+            padding: 1rem;
+            border-radius: 15px 15px 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-input {
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .chat-input textarea {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 0.8rem;
+            resize: none;
+            height: 60px;
+        }
+
+        .chat-input textarea:focus {
+            border-color: #00b894;
+            box-shadow: 0 0 0 0.2rem rgba(0, 184, 148, 0.25);
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-4">
+                    <h1 class="h4 mb-0">📚 Book Review System</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/customer-dashboard" class="nav-link">Home</a>
+                        <a href="/library" class="nav-link">Library</a>
+                        <a href="/social" class="nav-link">Social</a>
+                        <a href="/about" class="nav-link">About</a>
+                        <a href="/faqs" class="nav-link">FAQs</a>
+                        <a href="/challenges" class="nav-link">Challenges</a>
+                    </nav>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/messages" class="nav-link">
+                        Messages
+                        <span class="badge" th:if="${unreadMessageCount > 0}" 
+                              th:text="${unreadMessageCount}">0</span>
+                    </a>
+                    <a href="/friend-requests" class="nav-link">
+                        Friend Requests
+                        <span class="badge" th:if="${pendingRequests != null && !pendingRequests.isEmpty()}" 
+                              th:text="${pendingRequests.size()}">0</span>
+                    </a>
+                    <a href="/friends" class="nav-link">Friends</a>
+                    <a href="/logout" class="btn btn-outline-danger">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container container">
+        <h2 class="page-title">Messages</h2>
+
+        <div class="row">
+            <!-- Conversations List -->
+            <div class="col-md-4">
+                <div class="conversation-list">
+                    <div th:each="conversation : ${conversations}" 
+                         class="conversation-item"
+                         th:data-user-id="${conversation.userId}"
+                         th:data-user-name="${conversation.name}">
+                        <div class="user-info">
+                            <div class="user-avatar" th:text="${#strings.substring(conversation.name, 0, 1)}">U</div>
+                            <div>
+                                <h5 class="mb-0" th:text="${conversation.name}">User Name</h5>
+                                <p class="message-preview" th:text="${conversation.lastMessage}">Last message...</p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column align-items-end">
+                            <span class="timestamp" th:text="${conversation.lastMessageTime}">2:30 PM</span>
+                            <span class="unread-badge" th:if="${conversation.unreadCount > 0}" 
+                                  th:text="${conversation.unreadCount}">3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="col-md-8">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Messages will be loaded here -->
+                    </div>
+                    <div class="chat-input">
+                        <form id="messageForm" class="d-flex gap-2">
+                            <textarea class="form-control" placeholder="Type your message..." id="messageInput"></textarea>
+                            <button type="submit" class="btn btn-message">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentChatUserId = null;
+        let currentChatUserName = null;
+
+        // Add click event listeners to conversation items
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const username = this.getAttribute('data-user-name');
+                loadChat(userId, username);
+            });
+        });
+
+        function loadChat(userId, username) {
+            currentChatUserId = userId;
+            currentChatUserName = username;
+            loadMessages(userId);
+        }
+
+        function loadMessages(userId) {
+            fetch(`/api/messages/${userId}`)
+                .then(response => response.json())
+                .then(messages => {
+                    const chatMessages = document.getElementById('chatMessages');
+                    chatMessages.innerHTML = '';
+                    messages.forEach(message => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `message ${message.sent ? 'message-sent' : 'message-received'}`;
+                        messageDiv.textContent = message.content;
+                        chatMessages.appendChild(messageDiv);
+                    });
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                })
+                .catch(error => console.error('Error loading messages:', error));
+        }
+
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!currentChatUserId) return;
+
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                fetch('/api/messages/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        receiverId: currentChatUserId,
+                        content: message
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        input.value = '';
+                        loadMessages(currentChatUserId);
+                    }
+                })
+                .catch(error => console.error('Error sending message:', error));
+            }
+        });
+
+        // Check for new messages every 10 seconds
+        setInterval(function() {
+            if (currentChatUserId) {
+                loadMessages(currentChatUserId);
+            }
+            
+            // Update unread count
+            fetch('/api/messages/unread-count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.querySelector('.nav-link[href="/messages"] .badge');
+                    if (data.unreadCount > 0) {
+                        if (!badge) {
+                            const newBadge = document.createElement('span');
+                            newBadge.className = 'badge';
+                            newBadge.textContent = data.unreadCount;
+                            document.querySelector('.nav-link[href="/messages"]').appendChild(newBadge);
+                        } else {
+                            badge.textContent = data.unreadCount;
+                        }
+                    } else if (badge) {
+                        badge.remove();
+                    }
+                })
+                .catch(error => console.error('Error checking messages:', error));
+        }, 10000);
+    </script>
+</body>
+
+</html> 

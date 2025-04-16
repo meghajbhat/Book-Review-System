@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Leaderboard - Book Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+
+        .leaderboard-container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .leaderboard-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .leaderboard-table td {
+            padding: 1rem;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .rank {
+            font-weight: bold;
+            color: #00b894;
+        }
+
+        .user-score {
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+
+        .medal {
+            font-size: 1.5rem;
+        }
+
+        .gold { color: #f1c40f; }
+        .silver { color: #bdc3c7; }
+        .bronze { color: #e67e22; }
+
+        .stats-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00b894;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="leaderboard-container">
+        <div class="leaderboard-header">
+            <h1>🏆 Quiz Leaderboard</h1>
+            <p class="text-muted">Top performers in the Book Trivia Quiz</p>
+            
+            <div class="stats-container mt-4 mb-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-3 text-center">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${totalScore}">0</div>
+                            <div class="stat-label">Total Score</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${bestScore}">0</div>
+                            <div class="stat-label">Best Score</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${attemptCount}">0</div>
+                            <div class="stat-label">Games Played</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${accuracy + '%'}">0%</div>
+                            <div class="stat-label">Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Total Score</th>
+                    <th>Games Played</th>
+                    <th>Best Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="score, status : ${aggregatedScores}">
+                    <td>
+                        <span th:if="${status.index == 0}" class="medal gold">🥇</span>
+                        <span th:if="${status.index == 1}" class="medal silver">🥈</span>
+                        <span th:if="${status.index == 2}" class="medal bronze">🥉</span>
+                        <span th:if="${status.index > 2}" class="rank" th:text="${status.index + 1}">4</span>
+                    </td>
+                    <td th:text="${score[0]}">Username</td>
+                    <td class="user-score" th:text="${score[1]}">15</td>
+                    <td th:text="${score[2]}">3</td>
+                    <td th:text="${score[3]}">5</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="text-center mt-4">
+            <a href="/book-trivia-quiz" class="btn btn-primary">Play Again</a>
+            <a href="/challenges" class="btn btn-outline-secondary ms-2">Back to Challenges</a>
+        </div>
+    </div>
+</body>
+
+</html> 

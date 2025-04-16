@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>About BookReview</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .about-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+        }
+        .section-title {
+            color: #2d3436;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .feature-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .feature-item {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+        .feature-item i {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            color: #00b894;
+        }
+        .btn-back {
+            background-color: #6c5ce7;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .btn-back:hover {
+            background-color: #5b4bc4;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="about-container">
+            <h1 class="text-center mb-4">About BookReview</h1>
+            
+            <div class="section">
+                <h2 class="section-title">📚 Our Mission</h2>
+                <p>BookReview is a vibrant community platform designed to connect book lovers, share literary experiences, and make reading more engaging through interactive features and fun challenges.</p>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">🌟 Core Features</h2>
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <i class="fas fa-book"></i>
+                        Browse and review a vast collection of books
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-users"></i>
+                        Connect with fellow readers and build your reading network
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-comments"></i>
+                        Share your thoughts through detailed book reviews
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-heart"></i>
+                        Create and manage your personal reading list
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">🎮 Interactive Challenges</h2>
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <i class="fas fa-gamepad"></i>
+                        Book Trivia Quiz - Test your literary knowledge
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-search"></i>
+                        Detective Cases - Solve book-themed mysteries
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-th"></i>
+                        Book Bingo - Complete reading challenges
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-puzzle-piece"></i>
+                        Character Match - Unscramble book titles
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">🏆 Achievement System</h2>
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <i class="fas fa-trophy"></i>
+                        Earn points through various activities
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-star"></i>
+                        Track your progress on leaderboards
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-level-up-alt"></i>
+                        Level up as you complete challenges
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-medal"></i>
+                        Compete with friends for top spots
+                    </li>
+                </ul>
+            </div>
+
+            <div class="text-center">
+                <a href="/customer-dashboard" class="btn-back">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

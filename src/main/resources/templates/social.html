@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social - Book Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            color: #2d3436;
+            text-decoration: none;
+            margin: 0 0.8rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #00b894, #6c5ce7);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #00b894;
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .main-container {
+            padding-top: 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #2d3436;
+        }
+
+        .user-username {
+            color: #636e72;
+            margin-bottom: 1rem;
+        }
+
+        .btn-view-profile {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-view-profile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+            color: white;
+        }
+
+        .btn-add-friend {
+            background: transparent;
+            border: 2px solid #00b894;
+            color: #00b894;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add-friend:hover {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+        }
+
+        .btn-requested {
+            background: #e9ecef;
+            color: #636e72;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: default;
+        }
+
+        .btn-cancel-request {
+            background: transparent;
+            border: none;
+            color: #ff6b6b;
+            padding: 0.4rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel-request:hover {
+            background: #fff5f5;
+            transform: scale(1.1);
+        }
+
+        .btn-message {
+            background: linear-gradient(45deg, #0984e3, #6c5ce7);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-message:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.2);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            letter-spacing: -0.5px;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 0.8rem 1.5rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #00b894;
+            box-shadow: 0 0 0 0.2rem rgba(0, 184, 148, 0.25);
+            outline: none;
+        }
+
+        .search-button {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+        }
+
+        .chat-modal .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 1rem;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            max-width: 80%;
+            position: relative;
+        }
+
+        .message-sent {
+            margin-left: auto;
+        }
+
+        .message-received {
+            margin-right: auto;
+        }
+
+        .message-content {
+            display: inline-block;
+            padding: 0.8rem 1rem;
+            border-radius: 15px;
+            margin-bottom: 4px;
+        }
+
+        .message-sent .message-content {
+            background: linear-gradient(45deg, #00b894, #6c5ce7);
+            color: white;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .message-received .message-content {
+            background: white;
+            border-radius: 15px 15px 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            color: #2d3436;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            display: block;
+            margin-top: 4px;
+            color: #636e72;
+        }
+
+        .message-sent .message-time {
+            text-align: right;
+        }
+
+        .message-received .message-time {
+            text-align: left;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .chat-input textarea {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 0.8rem;
+            resize: none;
+            height: 60px;
+        }
+
+        .chat-input textarea:focus {
+            border-color: #00b894;
+            box-shadow: 0 0 0 0.2rem rgba(0, 184, 148, 0.25);
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-4">
+                    <h1 class="h4 mb-0">📚 Book Review System</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/customer-dashboard" class="nav-link">Home</a>
+                        <a href="/library" class="nav-link">Library</a>
+                        <a href="/social" class="nav-link">Social</a>
+                        <a href="/about" class="nav-link">About</a>
+                        <a href="/faqs" class="nav-link">FAQs</a>
+                        <a href="/challenges" class="nav-link">Challenges</a>
+                    </nav>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/messages" class="nav-link">
+                        Messages
+                        <span class="badge" th:if="${unreadMessageCount > 0}" 
+                              th:text="${unreadMessageCount}">0</span>
+                    </a>
+                    <a href="/friend-requests" class="nav-link">
+                        Friend Requests
+                        <span class="badge" th:if="${pendingRequests != null && !pendingRequests.isEmpty()}" 
+                              th:text="${pendingRequests.size()}">0</span>
+                    </a>
+                    <a href="/friends" class="nav-link">Friends</a>
+                    <a href="/logout" class="btn btn-outline-danger">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container container">
+        <h2 class="page-title">Discover Readers</h2>
+        
+        <div class="search-container">
+            <form method="get" action="/social" class="d-flex gap-3">
+                <input type="text" name="search" class="search-input" placeholder="Search users by name or username..." 
+                       th:value="${param.search}">
+                <button type="submit" class="search-button">Search</button>
+            </form>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6" th:each="user : ${users}">
+                <div class="user-card">
+                    <h3 class="user-name" th:text="${user.name}">User Name</h3>
+                    <p class="user-username" th:text="'@' + ${user.username}">@username</p>
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/user/{id}(id=${user.userId})}" class="btn-view-profile">View Profile</a>
+                        
+                        <!-- Message Button - Only show for friends -->
+                        <button th:if="${#lists.contains(friends.![requester.userId], user.userId) || #lists.contains(friends.![receiver.userId], user.userId)}"
+                                type="button" class="btn-message"
+                                th:data-user-id="${user.userId}"
+                                th:data-user-name="${user.name}"
+                                onclick="openChat(this.getAttribute('data-user-id'), this.getAttribute('data-user-name'))">
+                            <i class="fas fa-comment-dots"></i> Message
+                        </button>
+
+                        <!-- Friend Request Button -->
+                        <th:block th:if="${!#lists.contains(friends.![requester.userId], user.userId) && !#lists.contains(friends.![receiver.userId], user.userId)}">
+                            <th:block th:with="hasPendingRequest=${#lists.contains(pendingRequests.![requester.userId], user.userId) || #lists.contains(pendingRequests.![receiver.userId], user.userId)}">
+                                <form th:if="${!hasPendingRequest}" th:action="@{/send-friend-request/{id}(id=${user.userId})}" 
+                                      method="post" style="display: inline-block;" th:id="'friendForm' + ${user.userId}">
+                                    <button type="submit" class="btn-add-friend" th:onclick="'handleFriendRequest(event, ' + ${user.userId} + ')'">Add Friend</button>
+                                </form>
+                                <div th:if="${hasPendingRequest}" class="btn-group">
+                                    <button type="button" class="btn-requested" disabled>Requested</button>
+                                    <button type="button" class="btn-cancel-request" 
+                                            th:data-userid="${user.userId}"
+                                            th:onclick="'cancelFriendRequest(\'' + ${user.userId} + '\')'">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </th:block>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div class="modal fade chat-modal" id="chatModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="chat-header">
+                    <h5 class="modal-title" id="chatTitle">Chat with Friend</h5>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be loaded here -->
+                </div>
+                <div class="chat-input">
+                    <form id="messageForm" class="d-flex gap-2">
+                        <textarea class="form-control" placeholder="Type your message..." id="messageInput"></textarea>
+                        <button type="submit" class="btn btn-message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentChatUserId = null;
+        const chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+        
+        function openChat(userId, username) {
+            currentChatUserId = userId;
+            document.getElementById('chatTitle').textContent = `Chat with ${username}`;
+            loadMessages(userId);
+            chatModal.show();
+        }
+
+        function loadMessages(userId) {
+            fetch(`/api/messages/${userId}`)
+                .then(response => response.json())
+                .then(messages => {
+                    const chatMessages = document.getElementById('chatMessages');
+                    chatMessages.innerHTML = '';
+                    messages.forEach(message => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `message ${message.sent ? 'message-sent' : 'message-received'}`;
+                        
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'message-content';
+                        contentDiv.textContent = message.content;
+                        
+                        const timeDiv = document.createElement('div');
+                        timeDiv.className = 'message-time';
+                        try {
+                            const messageDate = new Date(message.sentAt);
+                            timeDiv.textContent = formatMessageTime(messageDate);
+                        } catch (error) {
+                            console.error('Error parsing date:', message.sentAt);
+                            timeDiv.textContent = '';
+                        }
+                        
+                        messageDiv.appendChild(contentDiv);
+                        messageDiv.appendChild(timeDiv);
+                        chatMessages.appendChild(messageDiv);
+                    });
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                })
+                .catch(error => console.error('Error loading messages:', error));
+        }
+
+        function formatMessageTime(date) {
+            if (!(date instanceof Date) || isNaN(date)) {
+                return ''; // Return empty string if date is invalid
+            }
+
+            const now = new Date();
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            const isToday = date.toDateString() === now.toDateString();
+            const isYesterday = date.toDateString() === yesterday.toDateString();
+            
+            const timeString = date.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            
+            if (isToday) {
+                return timeString;
+            } else if (isYesterday) {
+                return `Yesterday ${timeString}`;
+            } else {
+                return `${date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric' 
+                })} ${timeString}`;
+            }
+        }
+
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message && currentChatUserId) {
+                fetch('/api/messages/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        receiverId: currentChatUserId,
+                        content: message
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Add the new message immediately to the chat
+                        const chatMessages = document.getElementById('chatMessages');
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message message-sent';
+                        
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'message-content';
+                        contentDiv.textContent = message;
+                        
+                        const timeDiv = document.createElement('div');
+                        timeDiv.className = 'message-time';
+                        const now = new Date();
+                        timeDiv.textContent = formatMessageTime(now);
+                        
+                        messageDiv.appendChild(contentDiv);
+                        messageDiv.appendChild(timeDiv);
+                        chatMessages.appendChild(messageDiv);
+                        
+                        // Clear input and scroll to bottom
+                        input.value = '';
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                })
+                .catch(error => console.error('Error sending message:', error));
+            }
+        });
+
+        function handleFriendRequest(event, userId) {
+            event.preventDefault();
+            const form = document.getElementById('friendForm' + userId);
+            
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Replace the form with the "Requested" button and cancel button
+                    const buttonGroup = document.createElement('div');
+                    buttonGroup.className = 'btn-group';
+                    buttonGroup.innerHTML = `
+                        <button type="button" class="btn-requested" disabled>Requested</button>
+                        <button type="button" class="btn-cancel-request" onclick="cancelFriendRequest('${userId}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    form.parentNode.replaceChild(buttonGroup, form);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function cancelFriendRequest(userId) {
+            fetch(`/cancel-friend-request/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Check for notifications every 10 seconds
+        setInterval(function() {
+            // Check unread messages
+            fetch('/api/messages/unread-count')
+                .then(response => response.json())
+                .then(data => {
+                    const messageBadge = document.querySelector('.nav-link[href="/messages"] .badge');
+                    updateBadge(messageBadge, data.unreadCount, document.querySelector('.nav-link[href="/messages"]'));
+                })
+                .catch(error => console.error('Error checking messages:', error));
+
+            // Check friend requests
+            fetch('/api/friend-requests/pending-count')
+                .then(response => response.json())
+                .then(data => {
+                    const requestBadge = document.querySelector('.nav-link[href="/friend-requests"] .badge');
+                    updateBadge(requestBadge, data.pendingCount, document.querySelector('.nav-link[href="/friend-requests"]'));
+                })
+                .catch(error => console.error('Error checking friend requests:', error));
+        }, 10000);
+
+        function updateBadge(badge, count, parentElement) {
+            if (count > 0) {
+                if (!badge) {
+                    const newBadge = document.createElement('span');
+                    newBadge.className = 'badge bg-danger rounded-pill ms-1';
+                    newBadge.textContent = count;
+                    parentElement.appendChild(newBadge);
+                } else {
+                    badge.textContent = count;
+                }
+            } else if (badge) {
+                badge.remove();
+            }
+        }
+    </script>
+</body>
+
+</html>

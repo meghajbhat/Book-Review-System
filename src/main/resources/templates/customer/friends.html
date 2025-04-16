@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Friends - Book Review</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .friend-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .friend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/customer/customer-dashboard">Book Review</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/customer/social">Social</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/customer/friend-requests">
+                            Friend Requests
+                            <span class="badge badge-light" th:text="${pendingRequests.size()}">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>My Friends</h2>
+        <div th:if="${friends.empty}">
+            <p>You haven't added any friends yet.</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4" th:each="friendship : ${friends}">
+                <div class="friend-card">
+                    <h5 th:text="${friendship.requester.userId == currentUser.userId ? friendship.receiver.name : friendship.requester.name}">Friend Name</h5>
+                    <p class="text-muted" th:text="'@' + (friendship.requester.userId == currentUser.userId ? friendship.receiver.username : friendship.requester.username)">@username</p>
+                    <a th:href="@{/customer/user/{id}(id=${friendship.requester.userId == currentUser.userId ? friendship.receiver.userId : friendship.requester.userId})}" 
+                       class="btn btn-primary btn-sm">View Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html> 

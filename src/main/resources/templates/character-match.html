@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Character Match Game</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .game-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .scrambled-title {
+            font-size: 2rem;
+            letter-spacing: 0.5rem;
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            font-family: monospace;
+        }
+        .attempts {
+            font-size: 1.2rem;
+            color: #6c757d;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .form-control {
+            font-size: 1.2rem;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            transition: background-color 0.3s;
+        }
+        .btn-submit:hover {
+            background-color: #45a049;
+        }
+        .message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .points {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-container">
+            <h1 class="text-center mb-4">Character Match Game</h1>
+            <p class="text-center mb-4">Unscramble the book title below!</p>
+            
+            <div class="scrambled-title" id="scrambledTitle" th:text="${scrambledTitle}"></div>
+            
+            <div class="attempts" id="attempts" th:text="'Attempts: ' + ${score.attempts}">Attempts: 0</div>
+            
+            <form id="answerForm" class="mb-3">
+                <input type="hidden" id="scoreId" th:value="${score.id}">
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="answer" placeholder="Enter your answer" required>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-check me-2"></i>Submit Answer
+                    </button>
+                </div>
+            </form>
+            
+            <div class="message" id="message"></div>
+            <div class="points" id="points"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#answerForm').on('submit', function(e) {
+                e.preventDefault();
+                const answer = $('#answer').val();
+                const scoreId = $('#scoreId').val();
+                
+                $.ajax({
+                    url: '/character-match/check',
+                    method: 'POST',
+                    data: { 
+                        answer: answer,
+                        scoreId: scoreId
+                    },
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function(response) {
+                        try {
+                            const result = typeof response === 'string' ? JSON.parse(response) : response;
+                            
+                            if (result.correct) {
+                                $('#message').removeClass('error').addClass('success')
+                                    .text(result.message).show();
+                                $('#points').text('You earned ' + result.points + ' points!').show();
+                                $('#answerForm').hide();
+                                
+                                // Redirect to leaderboard after a short delay
+                                setTimeout(function() {
+                                    window.location.href = '/character-match/leaderboard';
+                                }, 2000);
+                            } else {
+                                $('#message').removeClass('success').addClass('error')
+                                    .text(result.message).show();
+                                $('#attempts').text('Attempts: ' + result.attempts);
+                                $('#answer').val('').focus();
+                            }
+                        } catch (e) {
+                            $('#message').removeClass('success').addClass('error')
+                                .text('An error occurred while processing the response.').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#message').removeClass('success').addClass('error')
+                            .text('An error occurred. Please try again.').show();
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

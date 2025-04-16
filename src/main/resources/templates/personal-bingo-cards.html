@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Book Bingo Cards - Book Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ... (reuse existing styles from book-bingo.html) ... */
+        
+        .card-creator {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .challenge-input {
+            margin-bottom: 1rem;
+        }
+
+        .challenge-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .challenge-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .challenge-item button {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+        }
+
+        .personal-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .personal-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .personal-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3436;
+            margin: 0;
+        }
+
+        .card-progress {
+            font-size: 0.9rem;
+            color: #00b894;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ... (reuse header from book-bingo.html) ... -->
+
+    <div class="main-container container">
+        <div class="card-creator">
+            <h2 class="bingo-title">Create Your Personal Bingo Card</h2>
+            
+            <form id="cardCreatorForm" class="mb-4">
+                <div class="mb-3">
+                    <label for="cardTitle" class="form-label">Card Title</label>
+                    <input type="text" class="form-control" id="cardTitle" required>
+                </div>
+                
+                <div class="challenge-input">
+                    <label for="challenge" class="form-label">Add Challenge</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="challenge" placeholder="Enter a reading challenge">
+                        <button type="button" class="btn btn-primary" onclick="addChallenge()">Add</button>
+                    </div>
+                </div>
+
+                <ul id="challengeList" class="challenge-list"></ul>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <span id="challengeCount">0/25 challenges added</span>
+                    <button type="submit" class="btn-action btn-primary" disabled>
+                        <i class="fas fa-plus me-2"></i>Create Card
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="personal-cards">
+            <div th:each="card : ${personalCards}" class="personal-card">
+                <div class="card-header">
+                    <h3 class="card-title" th:text="${card.title}">Card Title</h3>
+                    <span class="card-progress" th:text="${#numbers.formatDecimal(card.progress, 0, 0)} + '%'">0%</span>
+                </div>
+                <div class="progress mb-3">
+                    <div class="progress-bar" role="progressbar" 
+                         th:style="'width: ' + ${card.progress} + '%'"
+                         th:aria-valuenow="${card.progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a th:href="@{'/bingo/personal/' + ${card.id}}" class="btn-action btn-primary flex-grow-1">
+                        <i class="fas fa-play me-2"></i>View Card
+                    </a>
+                    <button th:if="${!card.completed}" class="btn-action btn-outline" 
+                            th:onclick="'deleteCard(' + ${card.id} + ')'">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let challenges = [];
+        const maxChallenges = 25;
+
+        function updateChallengeCount() {
+            const count = challenges.length;
+            document.getElementById('challengeCount').textContent = `${count}/${maxChallenges} challenges added`;
+            document.querySelector('button[type="submit"]').disabled = count !== maxChallenges;
+        }
+
+        function addChallenge() {
+            const input = document.getElementById('challenge');
+            const challenge = input.value.trim();
+            
+            if (challenge && challenges.length < maxChallenges) {
+                challenges.push(challenge);
+                
+                const li = document.createElement('li');
+                li.className = 'challenge-item';
+                li.innerHTML = `
+                    ${challenge}
+                    <button type="button" onclick="removeChallenge(${challenges.length - 1})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                document.getElementById('challengeList').appendChild(li);
+                input.value = '';
+                updateChallengeCount();
+            }
+        }
+
+        function removeChallenge(index) {
+            challenges.splice(index, 1);
+            document.getElementById('challengeList').innerHTML = '';
+            challenges.forEach((challenge, i) => {
+                const li = document.createElement('li');
+                li.className = 'challenge-item';
+                li.innerHTML = `
+                    ${challenge}
+                    <button type="button" onclick="removeChallenge(${i})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                document.getElementById('challengeList').appendChild(li);
+            });
+            updateChallengeCount();
+        }
+
+        document.getElementById('cardCreatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('cardTitle').value.trim();
+            if (!title || challenges.length !== maxChallenges) return;
+
+            fetch('/bingo/personal/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: title,
+                    challenges: challenges
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showToast('An error occurred. Please try again.', 'error');
+            });
+        });
+
+        function showToast(message, type) {
+            const toastContainer = document.querySelector('.toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            toast.addEventListener('hidden.bs.toast', () => {
+                toast.remove();
+            });
+        }
+    </script>
+</body>
+
+</html> 
